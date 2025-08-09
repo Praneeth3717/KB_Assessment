@@ -2,27 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import  {jwtDecode}  from 'jwt-decode';
+import axios from 'axios';
+import { API_BASE_URL } from '../utils/api';
 
 const Navbar = () => {
   const [userName, setUserName] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = Cookies.get('token');
-    console.log(token)
-    if (token) {
+    const getUser = async () => {
       try {
-        const user = jwtDecode(token);
-        console.log(user)
-        setUserName(user.name);
-      } catch (error) {
-        console.error('Invalid token:', error);
-        Cookies.remove('token');
-        navigate('/');
+        const res = await axios.get(`${API_BASE_URL}/auth/verify`, {
+          withCredentials: true,
+        });
+        setUserName(res.data.name);
+      } catch (err) {
+        console.error('Failed to fetch user info', err);
+        setUserName('');
       }
-    }
-  }, [navigate]);
+    };
+
+    getUser();
+  }, []);
+
 
   const handleLogout = () => {
     Cookies.remove('token');
