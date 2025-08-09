@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
-import api, { API_BASE_URL } from '../utils/api';
+import { API_BASE_URL } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
+import apiCalls from '../utils/api';
+
+const { loginUser,registerUser } =apiCalls
 
 const Auth = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -21,17 +24,7 @@ const Auth = () => {
 
   const handleLogin = async () => {
     try {
-      await api.post(
-        '/auth/login',
-        {
-          email: username,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-
+      await loginUser({ email: username, password });
       resetFields();
       navigate('/home');
     } catch (error) {
@@ -44,14 +37,8 @@ const Auth = () => {
       alert('Passwords do not match');
       return;
     }
-
     try {
-      await api.post('/auth/register', {
-        name,
-        email: username,
-        password,
-      });
-
+      await registerUser({ name, email: username, password });
       alert('Registered successfully. Please login.');
       resetFields();
       setIsRegistering(false);
@@ -71,7 +58,6 @@ const Auth = () => {
     >
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-4xl">
         <div className="flex flex-col lg:flex-row">
-          {/* Google Login */}
           <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0 flex justify-center items-center">
             <button
               onClick={handleSocialLogin}
@@ -82,7 +68,6 @@ const Auth = () => {
             </button>
           </div>
 
-          {/* Divider */}
           <div className="flex lg:flex-col items-center lg:px-4">
             <div className="hidden lg:block w-px bg-gray-300 h-full"></div>
             <div className="lg:hidden w-full h-px bg-gray-300"></div>
@@ -91,10 +76,9 @@ const Auth = () => {
             <div className="lg:hidden w-full h-px bg-gray-300"></div>
           </div>
 
-          {/* Manual Login/Register */}
           <div className="lg:w-1/2 lg:pl-8">
             <h2 className="text-xl font-medium text-gray-600 mb-6">
-              {isRegistering ? 'Register' : 'Sign in manually'}
+              {isRegistering ? 'Register' : 'Sign In'}
             </h2>
 
             <div className="space-y-4">

@@ -66,7 +66,7 @@ const Notes = ({ notes, onAddNote, onEditNote, onDeleteNote }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredNotes.map((note) => (
               <div
-                key={note.id}
+                key={note._id}
                 className={`border rounded-lg p-4 hover:shadow-md transition-shadow duration-200 ${getColorClasses(
                   typeToColorMap[note.type]
                 )}`}
@@ -80,7 +80,7 @@ const Notes = ({ notes, onAddNote, onEditNote, onDeleteNote }) => {
                   </button>
                   <button
                     className="text-gray-400 hover:text-gray-600 transition-colors"
-                    onClick={() => onDeleteNote(note.id)}
+                    onClick={() => onDeleteNote(note._id)}
                   >
                     <IoTrashOutline size={16} />
                   </button>

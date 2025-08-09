@@ -2,29 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import axios from 'axios';
-import { API_BASE_URL } from '../utils/api';
+import apiCalls from '../utils/api';
+
+const { verifyUser } = apiCalls
 
 const Navbar = () => {
   const [userName, setUserName] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getUser = async () => {
+    const fetchUser = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/auth/verify`, {
-          withCredentials: true,
-        });
+        const res = await verifyUser();
         setUserName(res.data.name);
-      } catch (err) {
-        console.error('Failed to fetch user info', err);
+      } catch {
         setUserName('');
       }
     };
-
-    getUser();
+    fetchUser();
   }, []);
-
 
   const handleLogout = () => {
     Cookies.remove('token');

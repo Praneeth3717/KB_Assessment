@@ -2,18 +2,22 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import Notes from '../components/Notes';
 import NoteModal from '../components/NoteModal';
-import api from '../utils/api';
+import apiCalls from '../utils/api';
+
+const { fetchNotes, addNote, updateNote, deleteNote }=apiCalls
 
 const Home = () => {
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState('add');
-  const [initialData, setInitialData] = useState(undefined);
   const [notes, setNotes] = useState([]);
-  const [editNoteId, setEditNoteId] = useState(null);
-
-  const fetchNotes = useCallback(async () => {
+  const [modalState, setModalState] = useState({
+    mode: 'add',     
+    editNoteId: null,  
+    initialData: undefined, 
+  });
+  
+  const fetchNotesData = useCallback(async () => {
     try {
-      const res = await api.get('/notes/get');
+      const res = await fetchNotes();
       setNotes(res.data);
     } catch (error) {
       console.error('Failed to fetch notes:', error);
@@ -21,26 +25,23 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    fetchNotes();
-  }, [fetchNotes]);
+    fetchNotesData();
+  }, [fetchNotesData]);
 
   const handleAddNote = () => {
-    setInitialData(undefined);
-    setModalMode('add');
+    setModalState({ mode: 'add', editNoteId: null, initialData: undefined });
     setShowModal(true);
   };
 
   const handleEditNote = (note) => {
-    setInitialData(note);
-    setModalMode('edit');
-    setEditNoteId(note._id);
+    setModalState({ mode: 'edit', editNoteId: note._id, initialData: note });
     setShowModal(true);
   };
 
   const handleDeleteNote = async (id) => {
     try {
-      await api.delete(`/notes/${id}`);
-      fetchNotes();
+      await deleteNote(id);
+      setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
     } catch (error) {
       console.error('Failed to delete note:', error);
     }
@@ -48,12 +49,15 @@ const Home = () => {
 
   const handleSubmitNote = async (note) => {
     try {
-      if (modalMode === 'add') {
-        await api.post('/notes/add', note);
-      } else if (editNoteId) {
-        await api.put(`/notes/${editNoteId}`, note);
+      if (modalState.mode === 'add') {
+        const res=await addNote(note);
+        setNotes((prevNotes) => [res.data, ...prevNotes]);
+      } else if (modalState.editNoteId) {
+        const res=await updateNote(modalState.editNoteId, note);
+        setNotes((prevNotes) =>
+          prevNotes.map((n) => (n._id === modalState.editNoteId ? res.data : n))
+        );
       }
-      fetchNotes();
       setShowModal(false);
     } catch (error) {
       console.error('Failed to submit note:', error);
@@ -65,18 +69,9 @@ const Home = () => {
       <Navbar />
       <div className="flex-1 overflow-y-auto">
         <Notes
-          notes={notes.map((note) => ({
-            id: note._id,
-            title: note.title,
-            description: note.description,
-            type: note.type,
-            createdAt: note.createdAt,
-          }))}
+          notes={notes}
           onAddNote={handleAddNote}
-          onEditNote={(note) => {
-            const fullNote = notes.find((n) => n._id === note.id);
-            if (fullNote) handleEditNote(fullNote);
-          }}
+          onEditNote={handleEditNote}
           onDeleteNote={(id) => handleDeleteNote(id)}
         />
       </div>
@@ -86,8 +81,8 @@ const Home = () => {
           <div className="absolute inset-0 bg-black opacity-50 z-40"></div>
           <div className="relative z-50 w-full max-w-xs md:max-w-xl px-2 md:px-3">
             <NoteModal
-              mode={modalMode}
-              initialData={initialData}
+              mode={modalState.mode}
+              initialData={modalState.initialData}
               onClose={() => setShowModal(false)}
               onSubmit={handleSubmitNote}
             />

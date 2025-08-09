@@ -1,27 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import axios from 'axios';
-import { API_BASE_URL } from '../utils/api';
+import apiCalls from '../utils/api';
+
+const { verifyUser } =apiCalls
 
 const PrivateRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
-    const verifyUser = async () => {
+    const checkAuth = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/auth/verify`, {
-          withCredentials: true,
-        });
-        if (res.status === 200) {
-          setIsAuthenticated(true);
-        }
-      } catch (err) {
+        const res = await verifyUser();
+        if (res.status === 200) setIsAuthenticated(true);
+      } catch {
         setIsAuthenticated(false);
-        console.log(err);
       }
     };
-
-    verifyUser();
+    checkAuth();
   }, []);
 
   if (isAuthenticated === null) {

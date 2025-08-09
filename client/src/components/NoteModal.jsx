@@ -20,7 +20,6 @@ const NoteModal = ({ mode, initialData, onClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({ title, description, type });
-    onClose();
   };
 
   return (
