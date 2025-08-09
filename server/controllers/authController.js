@@ -51,7 +51,7 @@ const googleCallback = async (req, res) => {
     const token = generateToken(user._id.toString(), user.name);
 
     res.cookie('token', token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
       sameSite: 'none',
     });
