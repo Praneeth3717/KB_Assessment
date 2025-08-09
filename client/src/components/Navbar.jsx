@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import apiCalls from '../utils/api';
 
-const { verifyUser } = apiCalls
+const { verifyUser,logout } = apiCalls
 
 const Navbar = () => {
   const [userName, setUserName] = useState('');
@@ -23,7 +22,7 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    Cookies.remove('token');
+    logout();
     navigate('/');
   };
 

@@ -12,6 +12,7 @@ const apiCalls = {
   loginUser: (credentials) => api.post('/auth/login', credentials),
   registerUser: (userData) => api.post('/auth/register', userData),
   verifyUser: () => api.get('/auth/verify'),
+  logout: ()=> api.post('/auth/logout'),
 
   fetchNotes: () => api.get('/notes/get'),
   addNote: (note) => api.post('/notes/add', note),

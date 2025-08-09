@@ -51,7 +51,7 @@ const googleCallback = async (req, res) => {
     const token = generateToken(user._id.toString(), user.name);
 
     res.cookie('token', token, {
-      httpOnly: false,
+      httpOnly: true,
       secure: true,
       sameSite: 'none',
     });
@@ -110,10 +110,13 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = {
-  verifyUser,
-  googleLogin,
-  googleCallback,
-  login,
-  register,
+const logout = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+  });
+  res.status(200).json({ message: 'Logged out successfully' });
 };
+
+module.exports = {verifyUser, googleLogin, googleCallback, login, register, logout};
