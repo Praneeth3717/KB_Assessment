@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { jwtDecode } from 'jwt-decode';
+import  jwtDecode  from 'jwt-decode';
 
 const Navbar = () => {
   const [userName, setUserName] = useState('');
@@ -10,7 +10,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const token = Cookies.get('token');
-
+    console.log(token)
     if (token) {
       try {
         const user = jwtDecode(token);
