@@ -1,18 +1,22 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Auth from './pages/Auth';
 import Home from './pages/Home';
 import PrivateRoute from './auth/PrivateRoute';
 
-const App = () => {
+function App(){
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Auth />} />
-        <Route path="/home" element={
-          <PrivateRoute>
-            <Home />
-          </PrivateRoute>
-          }/>
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );

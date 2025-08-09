@@ -25,7 +25,7 @@ const PrivateRoute = ({ children }) => {
   }, []);
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div>; 
+    return <div className='w-screen h-screen flex justify-center items-center'><p>Loading...</p></div>; 
   }
 
   if (!isAuthenticated) {

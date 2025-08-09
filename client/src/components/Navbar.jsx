@@ -14,8 +14,8 @@ const Navbar = () => {
     if (token) {
       try {
         const user = jwtDecode(token);
+        console.log(user)
         setUserName(user.name);
-        navigate('/home');
       } catch (error) {
         console.error('Invalid token:', error);
         Cookies.remove('token');
